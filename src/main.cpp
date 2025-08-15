@@ -4,6 +4,10 @@
 #include <string>
 
 int main () {
+    // load the dictionary
+    // initiaize trie object
+    // insert every word into the trie
+
     while (true) {
         std::cout << "Enter a prefix: ";
         std::string prefix{};
