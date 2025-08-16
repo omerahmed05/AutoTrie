@@ -5,7 +5,11 @@
 class Trie {
     private:
         TrieNode* root;
+        int charToIndex(char c);
 
     public:
-        std::vector<std::string> autocomplete(std::string prefix); 
+        Trie();
+        void insert(std::string word);
+        bool autocomplete(std::string prefix, std::vector<std::string> &res);
+        void collectAllWords(TrieNode* curr, std::string prefix, std::vector<std::string> &res); 
 };
