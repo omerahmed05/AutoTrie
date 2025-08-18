@@ -1,11 +1,24 @@
-/**
- *
- * contains:
- * - insert method that adds a word to the trie
- * - autocomplete method that returns a vector of words with the given prefix in the trie
- *      - once we reach the node corresponding to the last character in the prefix, we perform dfs from the current node
- */
 #include "Trie.h"
+
+Trie::Trie() {
+    root = new TrieNode();
+}
+
+/**
+ * Automatically called when Trie object goes out of scope
+ */
+Trie::~Trie() {
+    deleteSubtree(root);
+}
+
+void Trie::deleteSubtree(TrieNode* node) {
+    if (!node) return;
+    for (int i = 0; i < 26; i++) {
+        deleteSubtree(node->children[i]);
+    }
+    delete node;
+}
+
 /**
  * Helper Function:
  *
@@ -20,11 +33,6 @@
  *
  * ex: a - a = 0, b - a = 1, c - a = 2, z - a = 25
  */
-
- Trie::Trie() {
-    root = new TrieNode();
-}
-
 int Trie::charToIndex(char c)
 {
     if (c >= 'A' && c <= 'Z') {
@@ -40,7 +48,7 @@ int Trie::charToIndex(char c)
     return -1;
 }
 
-void Trie::collectAllWords(TrieNode *curr, std::string curr_word, std::vector<std::string> &res)
+void Trie::collectAllWords(TrieNode *curr, std::string &curr_word, std::vector<std::string> &res)
 {
     // dfs
 
@@ -61,13 +69,14 @@ void Trie::collectAllWords(TrieNode *curr, std::string curr_word, std::vector<st
         {
             char next_letter = 'a' + i; // (ASCII Value of 'a') + Index of Character = 97 + i
                                         // ex: 97 + 0 = 97 = a, 97 + 1 = 98 = b, ...
-            std::string new_word = curr_word + next_letter; // create a seperate string for each recursive call
-            collectAllWords(curr->children[i], new_word, res);
+            curr_word.push_back(next_letter);
+            collectAllWords(curr->children[i], curr_word, res);
+            curr_word.pop_back();
         }
     }
 }
 
-void Trie::insert(std::string word)
+void Trie::insert(std::string_view word)
 {
     TrieNode *curr = root;
 
@@ -90,7 +99,7 @@ void Trie::insert(std::string word)
     curr->isEndOfWord = true;
 }
 
-bool Trie::autocomplete(std::string prefix, std::vector<std::string> &res)
+bool Trie::autocomplete(std::string_view prefix, std::vector<std::string> &res)
 {
     // start at the root of the trie (curr)
     TrieNode *curr = root;
@@ -119,7 +128,8 @@ bool Trie::autocomplete(std::string prefix, std::vector<std::string> &res)
     }
 
     // collect all words with current prefix
-    collectAllWords(curr, prefix, res);
+    std::string prefix_str(prefix); 
+    collectAllWords(curr, prefix_str, res); // pass a real std::string object, not a temporary
 
     // return true
     return true;

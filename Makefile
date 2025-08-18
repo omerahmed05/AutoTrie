@@ -12,3 +12,7 @@ clean: # 2nd target
 debug:
 	g++ -Iinclude ./src/main.cpp ./src/Trie.cpp -g -o ./build/autotrie_debug
 	gdb ./build/autotrie_debug
+
+valgrind:
+	g++ -Iinclude ./src/main.cpp ./src/Trie.cpp -g -o ./build/autotrie_debug
+	valgrind ./build/autotrie_debug
